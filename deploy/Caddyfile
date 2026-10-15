@@ -1,0 +1,10 @@
+{$BACKEND_DOMAIN} {
+    request_body {
+        max_size 128KB
+    }
+    # No access logs, tracing, or request-body capture.
+    reverse_proxy api:8787 {
+        # The API intentionally sees the single proxy IP. Global quotas remain authoritative.
+        header_up -X-Forwarded-For
+    }
+}

@@ -1,0 +1,41 @@
+services:
+  api:
+    image: pisma-api:current
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      AI_PROVIDER: yandex
+      HOST: 0.0.0.0
+      BUDGET_PATH: /app/var/budget.json
+    volumes:
+      - budget:/app/var
+    restart: unless-stopped
+    init: true
+    mem_limit: 256m
+    cpus: 1
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  proxy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      BACKEND_DOMAIN: ${BACKEND_DOMAIN:?Set BACKEND_DOMAIN in deploy/.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+    depends_on:
+      - api
+volumes:
+  budget:
+  caddy_data:
+  caddy_config:

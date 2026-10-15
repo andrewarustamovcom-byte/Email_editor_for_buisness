@@ -1,0 +1,14 @@
+.git
+.agents
+.codex
+.aws
+node_modules
+dist
+artifacts
+var
+.env
+**/.env
+**/.env.*
+test-results
+playwright-report
+*.log

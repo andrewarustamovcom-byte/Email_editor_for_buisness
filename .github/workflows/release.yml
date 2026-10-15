@@ -1,0 +1,27 @@
+name: Release Chrome ZIP
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_VERSION: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint && npm run typecheck && npm test
+      - run: npm run build:release
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - name: Publish ready ZIP to GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release create "$RELEASE_TAG" "artifacts/pisma-${RELEASE_TAG#v}.zip" --title "Письма $RELEASE_TAG" --generate-notes

@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Письма — подключение нейросети</title><link rel="stylesheet" href="options.css"></head>
+<body><main><div class="mark">✦ Письма</div><h1>Подключите нейросеть</h1>
+<p>Письма проверяет облачная модель Groq. Запросы отправляются напрямую из расширения. Сервер и его аренда не нужны.</p>
+<ol><li>Откройте <a href="https://console.groq.com/keys" target="_blank" rel="noreferrer">Groq Console → API Keys</a> и создайте личный ключ.</li><li>Для бесплатных проверок используйте план <strong>Free</strong>. Расширение не меняет тариф вашего аккаунта. <a href="https://console.groq.com/docs/rate-limits" target="_blank" rel="noreferrer">Посмотреть квоты</a>.</li><li>Вставьте ключ ниже.</li></ol>
+<form id="settings"><label for="key">Личный API-ключ Groq</label><input id="key" type="password" autocomplete="off" spellcheck="false" placeholder="gsk_…" required maxlength="204"><button type="submit">Сохранить ключ</button><button id="delete" type="button" class="secondary">Удалить сохранённый ключ</button></form>
+<p id="status" role="status" aria-live="polite">Загружаем настройки…</p><p id="usage" class="muted"></p>
+<p class="note">Ключ хранится только в этом профиле Chrome и не синхронизируется. Странице Gmail и её скриптам он не передаётся. Пользователь этого компьютера может получить доступ к ключу. Расширение не сохраняет тексты писем.</p>
+<p class="muted">Модель: GPT-OSS 120B через Groq. После сохранения откройте Gmail и нажмите «Проверить письмо». Действуют квоты и правила Groq.</p>
+</main><script type="module" src="options.js"></script></body></html>

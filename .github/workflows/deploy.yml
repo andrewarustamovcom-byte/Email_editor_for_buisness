@@ -1,0 +1,43 @@
+name: Deploy backend manually
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: backend-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci && npm run lint && npm run typecheck && npm test
+      - run: docker build -t pisma-api:current .
+      - name: Package backend image and proxy configuration
+        run: |
+          docker save pisma-api:current -o /tmp/pisma-image.tar
+          tar -czf /tmp/pisma-config.tar.gz deploy/compose.yaml deploy/Caddyfile
+      - name: Deploy to configured personal server
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$DEPLOY_HOST" =~ ^[a-zA-Z0-9.-]+$ ]]
+          [[ "$DEPLOY_USER" =~ ^[a-zA-Z0-9_-]+$ ]]
+          install -m 700 -d "$RUNNER_TEMP/pisma-ssh"
+          printf '%s\n' "$SSH_PRIVATE_KEY" > "$RUNNER_TEMP/pisma-ssh/key"
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$RUNNER_TEMP/pisma-ssh/known_hosts"
+          chmod 600 "$RUNNER_TEMP/pisma-ssh/key" "$RUNNER_TEMP/pisma-ssh/known_hosts"
+          trap 'rm -rf "$RUNNER_TEMP/pisma-ssh"' EXIT
+          opts=(-i "$RUNNER_TEMP/pisma-ssh/key" -o "UserKnownHostsFile=$RUNNER_TEMP/pisma-ssh/known_hosts" -o StrictHostKeyChecking=yes)
+          scp "${opts[@]}" /tmp/pisma-image.tar /tmp/pisma-config.tar.gz "$DEPLOY_USER@$DEPLOY_HOST:/tmp/"
+          ssh "${opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" 'set -eu; test -f /opt/pisma/deploy/.env; docker load -i /tmp/pisma-image.tar; tar -xzf /tmp/pisma-config.tar.gz -C /opt/pisma; cd /opt/pisma; docker compose --env-file deploy/.env -p pisma -f deploy/compose.yaml up -d --no-build --wait; rm -f /tmp/pisma-image.tar /tmp/pisma-config.tar.gz'

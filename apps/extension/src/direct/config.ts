@@ -1,0 +1,9 @@
+export const GROQ_ORIGIN = 'https://api.groq.com';
+export const GROQ_ENDPOINT = `${GROQ_ORIGIN}/openai/v1/chat/completions`;
+export const GROQ_MODEL = 'openai/gpt-oss-120b';
+export const MAX_OUTPUT_TOKENS = 3000;
+export const DIRECT_TIMEOUT_MS = 25000;
+export const DAILY_REQUEST_LIMIT = 30;
+export const DAILY_TOKEN_LIMIT = 200000;
+export const LIFETIME_TOKEN_LIMIT = 2000000;
+export const REQUEST_INTERVAL_MS = 60000;

@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="UTF-8"><title>Gmail · обезличенный DOM fixture</title>
+<style>body{font:15px system-ui;background:#f4f5f7;margin:40px;color:#252236}main{max-width:720px}section[role=dialog]{background:white;border:1px solid #ddd;border-radius:12px;padding:24px;margin:20px 0;width:560px}input{display:block;border:0;border-bottom:1px solid #ddd;padding:12px 0;width:100%;font:inherit}[contenteditable]{padding:20px 0;min-height:100px;outline:none}.gmail_signature{color:#999;padding-top:20px}.a3s{padding:10px;background:#e8e9ed;border-radius:6px}button{padding:10px}</style></head>
+<body><main><h1>Проверка Gmail DOM</h1><p>Обезличенный стенд. Это не работающая почта Google.</p>
+<div data-message-id="history-1"><time datetime="2026-10-14T09:00:00+03:00">14 октября</time><div class="a3s">Договорились: отчёт нужен 20 октября. Бюджет — 50 000 рублей.</div></div>
+<section role="dialog" aria-label="Первый черновик"><input name="subjectbox" value="Отчёт по проекту"><div id="draft-1" role="textbox" aria-label="Текст первого письма" contenteditable="true" g_editable="true"><div>Коллеги, <b>немедленно</b> пришлите <a href="https://example.org/report">отчёт</a> как можно скорее.</div><div class="gmail_signature" data-smartmail="gmail_signature">С уважением,<br>Алексей</div><blockquote>Цитата прошлого письма.</blockquote></div></section>
+<section role="dialog" aria-label="Второй черновик"><input name="subjectbox" value="К сведению"><div id="draft-2" role="textbox" aria-label="Текст второго письма" contenteditable="true" g_editable="true">Коллеги, направляю протокол встречи для информации.</div></section>
+</main><script type="module" src="./harness.ts"></script></body></html>
